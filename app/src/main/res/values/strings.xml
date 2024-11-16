@@ -1,0 +1,15 @@
+<resources>
+    <string name="app_name">iSaom</string>
+    <string name="logo">Logo</string>
+    <string name="login">Login</string>
+    <string name="password">Password</string>
+    <string name="reset_message">If you lost your password and wish to reset it , enter your email below and so that we can send you the reset link.</string>
+    <string name="reset_password">Reset Password</string>
+
+    <string name="image">Image</string>
+    <string name="clothing">The handwoven textile “inabel,” commonly known to many as “Abel Iloko,” has known good and bad times, yet persisted to be one of the strongest living treasures of the Ilocanos.</string>
+    <string name="sports">One uniquely Ilocano game is kukudisi . A stick (the an-anak ) is placed on a baseline scratched into the ground. One player makes the stick jump in the air; the other player tries to catch it before it hits the ground. If the latter cannot do so, a second, longer stick (the in-ina ) is laid across the baseline; the player then tries to hit it with the an-anak. The next two phases of the game involve competing to see who can hit the an-anak (which has been tossed in the air and stuck into the baseline, respectively) with the in-ina the farthest.</string>
+    <string name="foods">PINAKBET or commonly known as Pakbet is a vegetable dish with fish sause. The vegetables in this dish are talong, sitaw, kamatis, kalabasa, siling haba, okra, ampalaya and many more.</string>
+    <string name="traditions">Courtship begins with normal conversations and visits to the girl’s home where the boy meets the girl and her family and get to know them more. Ilocanos are also fund of having Long courtships to make sure about their own feelings for each other. The boy send some love letters to the girl daily as constant reminders and declarations of a willingness to continue the erotic pursuit. The harana or serenate in english is also one way of expressing love of Ilocanos wherd The boy asks a his friends to join him, on a moonlit night, in waking up his beloved lady with love songs.</string>
+    <string name="culture">Ilocanos can be found living in the Northern Luzon. We are known to be thrifty and hardworking. In our culture, every centavo counts. In being thrifty we are called “kuripot”. Being kuripot is a positive way for us Ilocanos, but for others its not. It’s just that We, Ilocanos are just saving for something better. We are working hard to earn a living.</string>
+</resources>

@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "1093266505221",
+    "project_id": "isaom-dd242",
+    "storage_bucket": "isaom-dd242.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1093266505221:android:2e6b40e5d07468c435666c",
+        "android_client_info": {
+          "package_name": "com.ketchupzzz.isaom"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAonEKNq3m8muPBIq_DRxNaXGbTdN1aF40"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
