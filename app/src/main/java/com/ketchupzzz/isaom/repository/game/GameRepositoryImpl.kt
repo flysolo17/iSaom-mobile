@@ -1,6 +1,7 @@
 package com.ketchupzzz.isaom.repository.game
 
 import android.content.Context
+import android.util.Log
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.FirebaseFirestore
@@ -55,6 +56,7 @@ class GameRepositoryImpl(
             .collection(LEVELS_COLLECTION)
             .get()
             .addOnCompleteListener {
+
                 if (it.isSuccessful) {
                     val data = it.result.toObjects(Levels::class.java).shuffled()
                     result.invoke(UiState.Success(data))
@@ -102,14 +104,21 @@ class GameRepositoryImpl(
                 .groupBy { it.userID }
                 .mapNotNull { (userID, userSubmissions) ->
                     userID?.let { id ->
-                        val user = users.first { it.id == id }
-                        val highestScoresPerGame = userSubmissions.getMyHighestScorePerGameID()
-                        val totalScore = highestScoresPerGame.sumOf { it.score }
-                        UserWithGameSubmissions(user = user, submission =  highestScoresPerGame , totalScore = totalScore)
+                        val user = users.firstOrNull { it.id == id }
+                        if (user != null) {
+                            val highestScoresPerGame = userSubmissions.getMyHighestScorePerGameID()
+                            val totalScore = highestScoresPerGame.sumOf { it.score }
+                            UserWithGameSubmissions(user = user, submission = highestScoresPerGame, totalScore = totalScore)
+                        } else {
+                            Log.w("games", "User with ID $id not found in users collection")
+                            null
+                        }
                     }
                 }
             result(UiState.Success(userWithHighestScores))
-        } catch (e : Exception) {
+            Log.d("games", userWithHighestScores.toString())
+        } catch (e: Exception) {
+            Log.e("games", e.message.toString(), e)
             result(UiState.Error(e.message.toString()))
         }
     }

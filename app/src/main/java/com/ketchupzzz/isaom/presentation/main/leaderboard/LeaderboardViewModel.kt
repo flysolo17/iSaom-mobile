@@ -19,9 +19,7 @@ class LeaderboardViewModel @Inject constructor(
 ) : ViewModel() {
     var state by mutableStateOf(LeaderboardState())
 
-    init {
-        events(LeaderboardEvents.OnGetLeaderboard)
-    }
+
     fun events(e : LeaderboardEvents) {
         when(e) {
             LeaderboardEvents.OnGetLeaderboard -> getLeaderboard()

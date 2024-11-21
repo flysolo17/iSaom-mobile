@@ -97,10 +97,10 @@ dependencies {
 
     //window size
     implementation ("androidx.compose.material3:material3-window-size-class:1.2.1")
-    implementation(platform("com.google.firebase:firebase-bom:33.0.0"))
     implementation("io.coil-kt:coil-compose:2.6.0")
 
-
+    //firebase
+    implementation(platform("com.google.firebase:firebase-bom:33.0.0"))
     //retrofit
     implementation("com.squareup.retrofit2:retrofit:2.9.0")
     implementation("com.squareup.retrofit2:converter-gson:2.9.0")

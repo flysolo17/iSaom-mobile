@@ -271,6 +271,7 @@ fun MainNavGraph(
                 activity = content,
                 state = viewModel.state,
                 events = viewModel::events,
+
                 navHostController = navHostController,
             )
         }

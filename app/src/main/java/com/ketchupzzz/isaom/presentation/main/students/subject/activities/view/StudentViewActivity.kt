@@ -45,6 +45,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import coil.compose.AsyncImage
+import com.ketchupzzz.isaom.models.subject.Subjects
 import com.ketchupzzz.isaom.models.subject.activities.Activity
 import com.ketchupzzz.isaom.models.subject.activities.Question
 import com.ketchupzzz.isaom.utils.ProgressBar
@@ -143,7 +144,6 @@ fun StudentViewActivity(
     navHostController: NavHostController
 ) {
     val context = LocalContext.current
-
     LaunchedEffect(
         activity
     ) {
