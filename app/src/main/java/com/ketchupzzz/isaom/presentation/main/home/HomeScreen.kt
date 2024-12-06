@@ -61,7 +61,7 @@ fun HomeScreen(
                 modifier = modifier.fillMaxWidth(),
                 contentAlignment = Alignment.Center
             ) {
-                Text("Isaom", style = MaterialTheme.typography.titleLarge
+                Text("iSaom", style = MaterialTheme.typography.titleLarge
                     .copy(
                         fontSize = 48.sp,
                         fontWeight = FontWeight.ExtraLight
@@ -142,8 +142,7 @@ fun HomeScreen(
             }
         }
         item {
-           //games here
-            if (users != null) {
+            if (users?.type == UserType.STUDENT) {
                 FeatureCard(
                     title = "Games",
                     icon = R.drawable.game,

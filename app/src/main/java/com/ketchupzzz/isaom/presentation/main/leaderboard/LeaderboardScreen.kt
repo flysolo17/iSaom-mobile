@@ -110,12 +110,6 @@ fun UserScoreCard(
                    user.name ?: "no name",
                    style = MaterialTheme.typography.titleMedium
                )
-               Text(
-                   user.type?.name ?: "no type",
-                   style = MaterialTheme.typography.titleSmall.copy(
-                       color = Color.Gray
-                   )
-               )
            }
            Column(
                horizontalAlignment = Alignment.End

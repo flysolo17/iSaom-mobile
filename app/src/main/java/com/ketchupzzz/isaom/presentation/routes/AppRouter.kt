@@ -47,7 +47,7 @@ sealed class  AppRouter(val route : String) {
     data object TranslatorScreen : AppRouter(route = "translator")
     data object PrivacyPolicy : AppRouter(route = "privacy-policy")
 
-
+    data object SettingsScreen : AppRouter(route = "settings")
 
 
     data object MainRoutes : AppRouter(route = "main")

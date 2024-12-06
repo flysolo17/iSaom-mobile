@@ -39,7 +39,6 @@ import com.ketchupzzz.isaom.utils.toast
 @Composable
 fun DashboardScreen(
     modifier: Modifier = Modifier,
-
     state: DashboardState,
     events: (DashboardEvents) -> Unit,
     navHostController: NavHostController,

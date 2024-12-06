@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:tools="http://schemas.android.com/tools" tools:locale="ilo">
+    <string name="hello">Nya ngay</string>
+    <string name="one">Maysa</string>
+
+
+    <string name="successfully_logged_in">Naka-login ti panagbalin nga nalintag</string>
+    <string name="no_account_yet_register_here">Awan pay account? Agparehistro ditoy</string>
+    <string name="email">Email</string>
+    <string name="forgot_password">Nakalimutan ti Password</string>
+    <string name="login_as_guest">Ag-login kas Bisita</string>
+    <string name="login">Ag-login</string>
+    <string name="password">Password</string>
+    <string name="reset_message">No nakalipatam ti password ken kayat mo nga i-reset, ipasrek ti email mo ditoy baba tapno maipadanunmi ti link para iti panag-reset.</string>
+    <string name="reset_password">I-reset ti Password</string>
+
+    <string name="home">Balay</string>
+    <string name="about_ilocanos">Maipanggep kadagiti Ilokano</string>
+    <string name="leaderboard">Lista dagiti Nangunguna</string>
+    <string name="code_generator">Agparparda iti Kodigo</string>
+    <string name="profile">Propail</string>
+
+
+    <string name="successfully_created">Naliklikan iti Nadanes</string>
+    <string name="select_account_type">Piliem ti Klase ti Konto</string>
+    <string name="select_gender">Piliem ti Kasariaan</string>
+    <string name="registration_form">Porma ti Pagpaparehistro</string>
+    <string name="register">Agparehistro</string>
+    <string name="create_you_isaom_account">Aramidem ti ISAOM na Konto</string>
+    <string name="already_have_an_account_sign_in_here">Adda konto? Ag-sign in ditoy</string>
+    <string name="required">* Kasapulan</string>
+    <string name="fullname">Nasayaat a Nagan</string>
+    <string name="no_section_selected">Awan ti Napili nga Seksyon</string>
+    <string name="select_section">Piliem ti Seksyon</string>
+    <string name="no_section">Awan ti Seksyon</string>
+    <string name="confirm_password">Kumpirmaem ti Password</string>
+
+
+</resources>

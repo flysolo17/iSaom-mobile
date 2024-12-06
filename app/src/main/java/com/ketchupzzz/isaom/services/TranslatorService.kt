@@ -13,6 +13,7 @@ interface TranslatorService {
         @Query("source") source: String,
         @Query("target") target: String
     ): Call<TranslationResponse>
+
     companion object {
         const val API = "https://walrus-app-sbyty.ondigitalocean.app/translation/"
     }

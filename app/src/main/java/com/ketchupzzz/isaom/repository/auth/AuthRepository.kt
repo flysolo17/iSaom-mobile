@@ -11,7 +11,7 @@ interface AuthRepository {
 
 
     fun getUsers() : Users?
-    fun getCurrentUser(result: (UiState<Users?>) -> Unit)
+
     fun setUser(users: Users ?)
     fun login(email : String, password : String ,result : (UiState<Users>) -> Unit)
 
@@ -49,6 +49,8 @@ interface AuthRepository {
         result: (UiState<List<Users>>) -> Unit
     )
 
+
+    fun getCurrentUser(result: (UiState<Users?>) -> Unit)
     suspend fun sendEmailVerification(result: (UiState<String>) -> Unit)
 
     suspend fun listenToUserEmailVerification(result: (UiState<Boolean>) -> Unit)

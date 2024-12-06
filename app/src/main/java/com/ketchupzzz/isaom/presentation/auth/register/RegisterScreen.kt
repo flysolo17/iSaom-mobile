@@ -81,7 +81,8 @@ fun RegisterScreen(
     val coroutineScope = rememberCoroutineScope()
     LaunchedEffect(state) {
         if (state.registerSuccess) {
-            Toast.makeText(context,"Successfully Created",Toast.LENGTH_SHORT).show()
+            Toast.makeText(context,
+                context.getString(R.string.successfully_created),Toast.LENGTH_SHORT).show()
             delay(1000L)
             navHostController.popBackStack()
         }
@@ -97,7 +98,9 @@ fun RegisterScreen(
             navHostController = navHostController
         )}
     ) {
-        HorizontalPager(state = onBoardingState,modifier = modifier.fillMaxSize().padding(it), userScrollEnabled = false) {page->
+        HorizontalPager(state = onBoardingState,modifier = modifier
+            .fillMaxSize()
+            .padding(it), userScrollEnabled = false) {page->
             when(page) {
                 0 -> AccountTypeScreen() {
                     events(RegisterEvents.OnUserTypeSelected(it))
@@ -130,12 +133,13 @@ fun RegisterAppBar(
     events: (RegisterEvents) -> Unit,
     navHostController: NavHostController
 ) {
+    val context = LocalContext.current
     fun appBarTitle(state: PagerState) : String{
         return  when(state.currentPage) {
-            0 -> "Select Account Type"
-            1 -> "Select Gender"
-            2-> "Registration Form"
-            else -> "Select Account Type"
+            0 -> context.getString(R.string.select_account_type)
+            1 -> context.getString(R.string.select_gender)
+            2-> context.getString(R.string.registration_form)
+            else -> context.getString(R.string.select_account_type)
         }
     }
     TopAppBar(
@@ -180,13 +184,13 @@ fun RegisterLast(
         .verticalScroll(rememberScrollState()),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        Text(text = "Register", style = MaterialTheme.typography.titleLarge)
-        Text(text = "Create you ISAOM account", style = MaterialTheme.typography.labelMedium)
+        Text(text = stringResource(R.string.register), style = MaterialTheme.typography.titleLarge)
+        Text(text = stringResource(R.string.create_you_isaom_account), style = MaterialTheme.typography.labelMedium)
         Spacer(modifier = modifier.weight(1f))
         RegisterForm(state = state, events = events)
         Spacer(modifier = modifier.weight(1f))
         TextButton(onClick = { navHostController.popBackStack() }) {
-            Text(text = "Already have an account? Sign in here")
+            Text(text = stringResource(R.string.already_have_an_account_sign_in_here))
         }
     }
 
@@ -200,14 +204,14 @@ fun RegisterForm(modifier: Modifier = Modifier,state: RegisterState,events: (Reg
         .padding(8.dp),
         horizontalAlignment = Alignment.Start
     ) {
-        Text(text = "* Required", color = MaterialTheme.colorScheme.error)
+        Text(text = stringResource(R.string.required), color = MaterialTheme.colorScheme.error)
         OutlinedTextField(value = state.name.value, onValueChange = {
             events.invoke(RegisterEvents.OnNameChange(it))
         },
             modifier = modifier.fillMaxWidth(),
             isError = state.name.isError,
             label = {
-                Text(text = "Fullname")
+                Text(text = stringResource(R.string.fullname))
             },
             supportingText = {
                 Text(
@@ -228,7 +232,7 @@ fun RegisterForm(modifier: Modifier = Modifier,state: RegisterState,events: (Reg
             modifier = modifier.fillMaxWidth(),
             isError = state.email.isError,
             label = {
-                Text(text = "Email")
+                Text(text = stringResource(R.string.email))
             },
             supportingText = {
                 Text(
@@ -257,9 +261,9 @@ fun RegisterForm(modifier: Modifier = Modifier,state: RegisterState,events: (Reg
             }) {
                 OutlinedTextField(
                     readOnly = true,
-                    value = state.section?.name ?: "No Section Selected",
+                    value = state.section?.name ?: stringResource(R.string.no_section_selected),
                     onValueChange = { events(RegisterEvents.OnSectionChange(state.section)) },
-                    label = { Text("Select Section") },
+                    label = { Text(stringResource(R.string.select_section)) },
                     trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = sectionExpanded) },
                     modifier = Modifier
                         .fillMaxWidth()
@@ -267,7 +271,7 @@ fun RegisterForm(modifier: Modifier = Modifier,state: RegisterState,events: (Reg
                     isError = state.section == null,
                     supportingText = {
                         Text(
-                            text = if( state.section == null ) "No section selected" else "",
+                            text = if( state.section == null ) stringResource(R.string.no_section_selected) else "",
                             color = MaterialTheme.colorScheme.error,
                             style = MaterialTheme.typography.labelSmall,
                             textAlign = TextAlign.Start
@@ -282,7 +286,7 @@ fun RegisterForm(modifier: Modifier = Modifier,state: RegisterState,events: (Reg
                 ) {
                     sections.forEach { section ->
                         DropdownMenuItem(
-                            text = { Text(section.name?: "no section") },
+                            text = { Text(section.name?: stringResource(R.string.no_section)) },
                             onClick = {
                                 events(RegisterEvents.OnSectionChange(section))
                                 sectionExpanded = false
@@ -356,7 +360,7 @@ fun RegisterForm(modifier: Modifier = Modifier,state: RegisterState,events: (Reg
             },
             visualTransformation = if (state.isConfirmPasswordHidden) VisualTransformation.None else PasswordVisualTransformation(),
             label = {
-                Text(text = "Confirm password")
+                Text(text = stringResource(R.string.confirm_password))
             },
             modifier = modifier.fillMaxWidth(),
             supportingText = {
@@ -377,7 +381,7 @@ fun RegisterForm(modifier: Modifier = Modifier,state: RegisterState,events: (Reg
 
 
         PrimaryButton(onClick = { events(RegisterEvents.OnCreateAccount) }, isLoading = state.isLoading) {
-            Text(text = "Register", fontWeight = FontWeight.Bold)
+            Text(text = stringResource(R.string.register), fontWeight = FontWeight.Bold)
         }
     }
 }

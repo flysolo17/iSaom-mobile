@@ -73,9 +73,10 @@ object AppModule {
     @Provides
     @Singleton
     fun provideLessonRepository(
-        firestore: FirebaseFirestore
+        firestore: FirebaseFirestore,
+        auth: FirebaseAuth
     ) : LessonRepository {
-        return LessonRepositoryImpl(firestore)
+        return LessonRepositoryImpl(firestore,auth)
     }
 
     @Provides

@@ -33,6 +33,7 @@ import androidx.compose.material3.TextButton
 import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -54,6 +55,7 @@ import com.ketchupzzz.isaom.R
 import com.ketchupzzz.isaom.models.UserType
 import com.ketchupzzz.isaom.presentation.routes.AppRouter
 import com.ketchupzzz.isaom.ui.custom.PrimaryButton
+import com.ketchupzzz.isaom.utils.LanguageService
 import com.ketchupzzz.isaom.utils.toast
 import kotlinx.coroutines.delay
 
@@ -65,9 +67,15 @@ fun LoginScreen(
     events: (LoginEvents) -> Unit
 ) {
     val context = LocalContext.current
+
+    val languageService = remember { LanguageService(context) }
+    LaunchedEffect(Unit) {
+        val savedLanguage = languageService.getSavedLanguageFromPreferences()
+        languageService.setAppLocale(savedLanguage)
+    }
     LaunchedEffect(state) {
         if (state.isLoggedIn) {
-            Toast.makeText(context,"Successfully Logged in",Toast.LENGTH_SHORT).show()
+            Toast.makeText(context, context.getString(R.string.successfully_logged_in),Toast.LENGTH_SHORT).show()
             delay(1000)
             if (state.users?.verified == true) {
                 navHostController.navigate(AppRouter.MainRoutes.route)
@@ -96,7 +104,7 @@ fun LoginScreen(
             }
             Spacer(modifier = modifier.weight(1f))
             TextButton(onClick = { navHostController.navigate(AppRouter.RegisterScreen.route) }) {
-                Text(text = "No account yet ? register here")
+                Text(text = stringResource(R.string.no_account_yet_register_here))
             }
         }
     }
@@ -121,7 +129,7 @@ fun LoginForm(modifier: Modifier = Modifier, navHostController: NavHostControlle
                 modifier = modifier.fillMaxWidth(),
                 isError = state.email.isError,
                 label = {
-                    Text(text = "Email")
+                    Text(text = stringResource(R.string.email))
                 },
                 supportingText = {
                     Text(
@@ -179,11 +187,11 @@ fun LoginForm(modifier: Modifier = Modifier, navHostController: NavHostControlle
             TextButton(onClick = {
                 navHostController.navigate(AppRouter.ForgotPasswordScreen.route)
             },modifier = modifier.align(Alignment.End)) {
-                Text(text = "Forgot Password")
+                Text(text = stringResource(R.string.forgot_password))
             }
             
             PrimaryButton(onClick = { events(LoginEvents.OnLogin )}, isLoading = state.isLoading) {
-                Text(text = "Login", fontWeight = FontWeight.Bold)
+                Text(text = stringResource(R.string.login), fontWeight = FontWeight.Bold)
             }
 
 
@@ -199,13 +207,12 @@ fun LoginForm(modifier: Modifier = Modifier, navHostController: NavHostControlle
                 onClick = {  navHostController.navigate(AppRouter.MainRoutes.route)
             }) {
                 Text(
-                    text = "Login as Guest",
+                    text = stringResource(R.string.login_as_guest),
                     textAlign = TextAlign.Center,
                     style = MaterialTheme.typography.titleMedium
                 )
             }
         }
-
     }
 
 }

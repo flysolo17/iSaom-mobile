@@ -1,6 +1,5 @@
 package com.ketchupzzz.isaom.presentation.main
 
-import android.widget.Space
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -16,7 +15,7 @@ import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material.icons.filled.PrivacyTip
 import androidx.compose.material.icons.filled.Search
-import androidx.compose.material3.BadgedBox
+import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material3.DrawerValue
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
@@ -34,29 +33,24 @@ import androidx.compose.material3.rememberDrawerState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.text.capitalize
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
-import com.google.mlkit.vision.text.Text
 import com.ketchupzzz.isaom.R
-import com.ketchupzzz.isaom.models.UserType
-import com.ketchupzzz.isaom.presentation.main.navigation.NavigationItems
 import com.ketchupzzz.isaom.presentation.main.navigation.getNavItems
 import com.ketchupzzz.isaom.presentation.routes.AppRouter
 import com.ketchupzzz.isaom.presentation.routes.MainNavGraph
-import com.ketchupzzz.isaom.utils.IsaomTopBar
 import com.ketchupzzz.isaom.utils.ProgressBar
 import com.ketchupzzz.isaom.utils.UnknownError
 import kotlinx.coroutines.launch
@@ -77,7 +71,8 @@ fun MainScreen(
     val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
     val scope = rememberCoroutineScope()
 
-    val items =   state.users.getNavItems()
+    val context = LocalContext.current
+    val items =   state.users.getNavItems(context)
     val isNavItem = items.any {
         it.route == currentRoute?.route
     }
@@ -144,6 +139,28 @@ fun MainScreen(
                             }
 
                             Column {
+                                NavigationDrawerItem(
+                                    label = {
+                                        Text("Settings")
+                                    },
+                                    selected = false,
+                                    icon = {
+                                        Icon(imageVector = Icons.Default.Settings, contentDescription = "")
+                                    },
+                                    onClick = {
+
+                                        navHostController.navigate(AppRouter.SettingsScreen.route) {
+                                            popUpTo(navHostController.graph.findStartDestination().id) {
+                                                saveState = true
+                                            }
+                                            launchSingleTop = true
+                                            restoreState = true
+                                        }
+                                        scope.launch {
+                                            drawerState.close()
+                                        }
+                                    }
+                                )
                                 NavigationDrawerItem(
                                     label = {
                                         Text("Privacy Policy")

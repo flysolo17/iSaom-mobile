@@ -70,6 +70,7 @@ import com.ketchupzzz.isaom.presentation.main.translator.TranslatorScreen
 import com.ketchupzzz.isaom.presentation.main.translator.TranslatorViewModel
 import com.ketchupzzz.isaom.presentation.main.search.SearchScreen
 import com.ketchupzzz.isaom.presentation.main.search.SearchScreenViewModel
+import com.ketchupzzz.isaom.settings.SettingsScreen
 import java.net.URLDecoder
 import java.nio.charset.StandardCharsets
 
@@ -149,6 +150,10 @@ fun MainNavGraph(
         composable(route = AppRouter.TranslatorScreen.route) {
             val viewModel = hiltViewModel<TranslatorViewModel>()
             TranslatorScreen(state = viewModel.state, events = viewModel::events)
+        }
+
+        composable(route = AppRouter.SettingsScreen.route) {
+           SettingsScreen()
         }
         composable(
             route = AppRouter.Dictionary.route

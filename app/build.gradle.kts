@@ -3,7 +3,6 @@ plugins {
     alias(libs.plugins.jetbrains.kotlin.android)
 
     id("kotlin-parcelize")
-
     id("kotlin-kapt")
     id("com.google.dagger.hilt.android")
     id("com.google.gms.google-services")
@@ -106,6 +105,9 @@ dependencies {
     implementation("com.squareup.retrofit2:converter-gson:2.9.0")
     implementation("io.coil-kt:coil-compose:2.6.0")
     implementation("com.squareup.okhttp3:logging-interceptor:4.9.3")
+
+
+
     implementation ("com.pierfrancescosoffritti.androidyoutubeplayer:core:12.1.0")
 
 
@@ -135,11 +137,7 @@ dependencies {
 //    implementation ("androidx.room:room-ktx:2.5.1")
 //    kapt ("androidx.room:room-compiler:2.5.1")
 //    implementation ("androidx.room:room-paging:2.5.1")
-
-
     implementation("io.github.grizzi91:bouquet:1.1.2")
-
-
 }
 
 

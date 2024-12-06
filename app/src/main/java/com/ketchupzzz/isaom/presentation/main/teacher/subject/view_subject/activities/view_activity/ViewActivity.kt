@@ -58,6 +58,7 @@ import coil.compose.AsyncImage
 import com.ketchupzzz.isaom.models.subject.activities.Question
 import com.ketchupzzz.isaom.presentation.main.teacher.subject.view_subject.activities.create_question.CreateQuestion
 import com.ketchupzzz.isaom.presentation.main.teacher.subject.view_subject.activities.edit_question.EditQuestionScreen
+import com.ketchupzzz.isaom.presentation.main.teacher.subject.view_subject.activities.view_activity.components.ReportsTab
 import com.ketchupzzz.isaom.utils.AvatarPhoto
 import com.ketchupzzz.isaom.utils.UnknownError
 import kotlinx.coroutines.launch
@@ -126,11 +127,20 @@ fun ViewActivityScreen(
                             }
                         )
                         Tab(
+                            selected = pageState.currentPage == 0,
+                            text = { Text(text = "Reports") },
+                            onClick = {
+                                scope.launch {
+                                    pageState.animateScrollToPage(1)
+                                }
+                            }
+                        )
+                        Tab(
                             selected = pageState.currentPage == 1,
                             text = { Text(text = "Submissions") },
                             onClick = {
                                 scope.launch {
-                                    pageState.animateScrollToPage(1)
+                                    pageState.animateScrollToPage(2)
                                 }
                             }
                         )
@@ -140,7 +150,11 @@ fun ViewActivityScreen(
                     HorizontalPager(state = pageState) { index ->
                         when (index) {
                             0 -> QuestionsTab(activityID = activityID, state = state, events = events)
-                            1 -> SubmissionsTab(activityID = activityID, state = state, events = events) // Placeholder for SubmissionsTab
+                            1 -> ReportsTab(
+                                questions = state.questions,
+                                submissions = state.submissionWithStudent
+                            )
+                            2 -> SubmissionsTab(activityID = activityID, state = state, events = events) // Placeholder for SubmissionsTab
                         }
                     }
                 }

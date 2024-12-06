@@ -4,13 +4,20 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
+import androidx.appcompat.app.AppCompatActivity
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.windowsizeclass.ExperimentalMaterial3WindowSizeClassApi
 import androidx.compose.material3.windowsizeclass.WindowSizeClass
 import androidx.compose.material3.windowsizeclass.calculateWindowSizeClass
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.remember
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -25,7 +32,12 @@ import com.ketchupzzz.isaom.presentation.routes.authNavGraph
 
 
 import com.ketchupzzz.isaom.ui.theme.ISaomTheme
+import com.ketchupzzz.isaom.utils.GreetingMessage
+import com.ketchupzzz.isaom.utils.LanguageService
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 
 
 @AndroidEntryPoint
@@ -37,16 +49,12 @@ class MainActivity : ComponentActivity() {
         setContent {
             ISaomTheme {
                 val windowSize = calculateWindowSizeClass(activity = this)
-                val viewModel = hiltViewModel<DictionaryViewModel>()
-//                Scaffold {
-//                    DictionaryScreen(
-//                        modifier = Modifier.padding(it),
-//                        navHostController = rememberNavController(),
-//                        state = viewModel.state,
-//                        events = viewModel::events
-//                    )
-//                }
-
+                val context = LocalContext.current
+                val languageService = remember { LanguageService(context) }
+                LaunchedEffect(Unit) {
+                    val savedLanguage = languageService.getSavedLanguageFromPreferences()
+                    languageService.setAppLocale(savedLanguage)
+                }
                 IsaomApp(windowSizeClass = windowSize)
             }
         }

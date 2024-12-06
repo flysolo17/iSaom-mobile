@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:tools="http://schemas.android.com/tools" tools:locale="fil">
+    <string name="hello">kamusta</string>
+    <string name="one">Isa</string>
+    <string name="successfully_logged_in">Matagumpay na naka-login</string>
+    <string name="no_account_yet_register_here">Wala pang account? Magrehistro dito</string>
+    <string name="email">Email</string>
+    <string name="forgot_password">Nakalimutan ang Password</string>
+    <string name="login_as_guest">Mag-login bilang Bisita</string>
+    <string name="login">Mag-login</string>
+    <string name="password">Password</string>
+    <string name="reset_message">Kung nawala mo ang iyong password at nais itong i-reset, ilagay ang iyong email sa ibaba upang maipadala namin ang link para sa pag-reset.</string>
+    <string name="reset_password">I-reset ang Password</string>
+
+
+    <string name="home">Bahay</string>
+    <string name="about_ilocanos">Tungkol sa Ilokano</string>
+    <string name="leaderboard">Tala ng Nangunguna</string>
+    <string name="code_generator">Tagalikha ng Kodigo</string>
+    <string name="profile">Profile</string>
+
+
+    <string name="successfully_created">Matagumpay na Nalikha</string>
+    <string name="select_account_type">Piliin ang Uri ng Account</string>
+    <string name="select_gender">Piliin ang Kasarian</string>
+    <string name="registration_form">Form ng Rehistrasyon</string>
+    <string name="register">Magrehistro</string>
+    <string name="create_you_isaom_account">Gumawa ng iyong ISAOM account</string>
+    <string name="already_have_an_account_sign_in_here">May account na? Mag-sign in dito</string>
+    <string name="required">* Kinakailangan</string>
+    <string name="fullname">Buong Pangalan</string>
+    <string name="no_section_selected">Walang Napiling Seksyon</string>
+    <string name="select_section">Piliin ang Seksyon</string>
+    <string name="no_section">Walang Seksyon</string>
+    <string name="confirm_password">Kumpirmahin ang Password</string>
+
+</resources>
