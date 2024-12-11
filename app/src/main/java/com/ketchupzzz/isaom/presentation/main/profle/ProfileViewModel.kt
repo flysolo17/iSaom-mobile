@@ -1,5 +1,6 @@
 package com.ketchupzzz.isaom.presentation.main.profle
 
+import android.net.Uri
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
@@ -8,6 +9,7 @@ import androidx.lifecycle.viewModelScope
 import com.ketchupzzz.isaom.utils.UiState
 import com.ketchupzzz.isaom.repository.auth.AuthRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -26,6 +28,35 @@ class ProfileViewModel @Inject constructor(
         when(profileEvents) {
             ProfileEvents.OnLoggedOut -> logout()
             ProfileEvents.GeUserInfg -> getInfo()
+            is ProfileEvents.SelectProfile -> updateProfile(profileEvents.uri)
+        }
+    }
+
+    private fun updateProfile(uri: Uri) {
+        viewModelScope.launch {
+            state.users?.id?.let {
+                authRepository.changeProfile(it,uri) {
+                    state = when(it) {
+                        is UiState.Error -> state.copy(
+                            errors = it.message,
+                            isLoading = false
+                        )
+                        UiState.Loading -> state.copy(
+                            isLoading = true,
+                            errors = null
+                        )
+                        is UiState.Success -> state.copy(
+                            isLoading = false,
+                            errors = null,
+                            messages = it.data
+                        )
+                    }
+                }
+            }
+            delay(1000)
+            state = state.copy(
+                messages = null
+            )
         }
     }
 

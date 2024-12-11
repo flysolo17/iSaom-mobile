@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
@@ -69,7 +70,7 @@ fun EditQuestionScreen(
         )
     }
     val context = LocalContext.current
-    Button(onClick = { showDialog = true }, modifier = button) {
+    Button(onClick = { showDialog = true }, modifier = button,  shape = MaterialTheme.shapes.small,) {
         Text(text = "Edit")
     }
     if (showDialog) {

@@ -48,15 +48,23 @@ class GameRepositoryImpl(
             }
     }
 
-    override suspend fun getAllLevels(gameID: String, result: (UiState<List<Levels>>) -> Unit) {
+    override suspend fun getAllLevels(gameID: String,levelIds : List<String>, result: (UiState<List<Levels>>) -> Unit) {
+        if (levelIds.isEmpty()) {
+            result.invoke(UiState.Error("No levels yet!"))
+            return
+        }
+        val newIds = levelIds.shuffled().take(10)
+        Log.d("game", "id1"  +levelIds.toString())
+        Log.d("game", "id2" + newIds.toString())
         result.invoke(UiState.Loading)
         delay(1000)
         firestore.collection(GAME_COLLECTION)
             .document(gameID)
             .collection(LEVELS_COLLECTION)
+            .whereIn("id",newIds)
+            .limit(10)
             .get()
             .addOnCompleteListener {
-
                 if (it.isSuccessful) {
                     val data = it.result.toObjects(Levels::class.java).shuffled()
                     result.invoke(UiState.Success(data))

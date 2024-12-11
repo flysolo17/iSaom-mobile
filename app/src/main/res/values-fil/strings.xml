@@ -34,4 +34,12 @@
     <string name="no_section">Walang Seksyon</string>
     <string name="confirm_password">Kumpirmahin ang Password</string>
 
+
+    <string name="beginner">Baguhan</string>
+    <string name="intermediate">Katamtaman</string>
+    <string name="advanced">Advanced</string>
+    <string name="confirm">Kumpirmahin</string>
+    <string name="are_you_sure_you_want_to_change_the_language">Sigurado ka bang nais mong baguhin ang wika?</string>
+
+
 </resources>

@@ -8,6 +8,6 @@ interface LessonRepository {
   suspend  fun getAllLessons(result : (UiState<List<SignLanguageLesson>>) -> Unit)
 
 
-    suspend fun getLessonAccount() : Result<LessonAccount>
+    suspend fun getLessonAccount(result : (UiState<LessonAccount>) -> Unit)
     suspend fun updateLesson(lessonID : String) : Result<String>
 }

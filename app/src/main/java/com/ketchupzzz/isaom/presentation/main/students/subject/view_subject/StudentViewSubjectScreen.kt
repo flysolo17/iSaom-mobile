@@ -8,6 +8,7 @@ import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.material3.Button
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.ScrollableTabRow
 import androidx.compose.material3.Tab
 import androidx.compose.material3.TabRow
 import androidx.compose.material3.Text
@@ -66,7 +67,7 @@ fun StudentViewSubjectScreen(
             } else -> {
             val subjects = state.subject
             if (subjects != null) {
-                TabRow(selectedTabIndex = pageState.currentPage) {
+                ScrollableTabRow(selectedTabIndex = pageState.currentPage) {
                     SubjectTabs(title = "Modules", isSelected = pageState.currentPage == 0) {
                         scope.launch {
                             pageState.animateScrollToPage(0)

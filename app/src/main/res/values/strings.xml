@@ -46,4 +46,11 @@
     <string name="confirm_password">Confirm password</string>
 
 
+    <string name="beginner">Beginner</string>
+    <string name="intermediate">Intermediate</string>
+    <string name="advanced">Advanced</string>
+    <string name="confirm">Confirm</string>
+    <string name="are_you_sure_you_want_to_change_the_language">Are you sure you want to change the language?</string>
+
+
 </resources>

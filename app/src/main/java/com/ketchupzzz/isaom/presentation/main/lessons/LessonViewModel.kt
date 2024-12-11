@@ -39,8 +39,10 @@ class LessonViewModel @Inject constructor(
 
     private fun getLessonAccount() {
         viewModelScope.launch {
-            lessonRepository.getLessonAccount().onSuccess {
-                state = state.copy(lessonAccount = it)
+            lessonRepository.getLessonAccount {
+                if(it is UiState.Success) {
+                    state = state.copy(lessonAccount = it.data)
+                }
             }
         }
     }

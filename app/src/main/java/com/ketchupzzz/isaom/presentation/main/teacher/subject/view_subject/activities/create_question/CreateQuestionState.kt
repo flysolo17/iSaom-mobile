@@ -12,5 +12,12 @@ data class CreateQuestionState(
     val choices: List<String> = emptyList(),
     val answer: String = "",
     val points: Int = 0,
-    val expanded: Boolean = false
+    val expanded: Boolean = false,
+    val labels  : List<String> = listOf(
+         "asul", "berde", "duwwa", "duyaw", "innem", "kabalyu", "kalding",
+        "kuadrado", "kulay kahel", "kulay mara-daga", "kulay ube", "kulibangbang", "kuton",
+        "lima", "mara-itlog", "marabituen", "maradiamante", "maysa", "nagbukel", "nalabbaga",
+        "nangisit", "nuang", "pito", "puraw", "rektangulo", "sangapulo", "siam", "tallo",
+        "triangulo", "tukak", "tuwwatu", "uleg", "uppat", "walo"
+    )
 )

@@ -7,5 +7,6 @@ data class ProfileState(
     val isLoading : Boolean = false,
     val users: Users ? = null,
     val errors : String ? = null,
-    val isLoggedOut : Boolean = false
+    val isLoggedOut : Boolean = false,
+    val messages : String ? = null,
 )

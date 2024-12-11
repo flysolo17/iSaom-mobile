@@ -1,6 +1,8 @@
 package com.ketchupzzz.isaom.presentation.main.gaming
 
 import android.annotation.SuppressLint
+import android.media.MediaPlayer
+import android.util.Log
 import android.util.Log.e
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
@@ -35,6 +37,7 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -82,6 +85,44 @@ fun GamingScreen(
     navHostController: NavHostController
 ) {
     val context = LocalContext.current
+    var isPlaying by remember { mutableStateOf(true) }
+    var mediaPlayer: MediaPlayer? by remember {
+        mutableStateOf(null)
+    }
+
+    LaunchedEffect(isPlaying) {
+        if (isPlaying) {
+            mediaPlayer?.start()
+        } else {
+            mediaPlayer?.pause()
+        }
+    }
+
+    DisposableEffect(context) {
+        mediaPlayer = MediaPlayer.create(context, R.raw.music).apply {
+            setOnCompletionListener {
+                this.seekTo(0)
+                this.start()
+            }
+        }
+        onDispose {
+            mediaPlayer?.release()
+            mediaPlayer = null
+        }
+    }
+    LaunchedEffect(isPlaying) {
+        Log.d("MusicPlayer", " isPlaying: $isPlaying")
+        if (isPlaying) {
+            Log.d("MusicPlayer", "Starting music...")
+            mediaPlayer?.seekTo(0)
+            mediaPlayer?.start()
+        } else {
+            Log.d("MusicPlayer", "Pausing music...")
+            mediaPlayer?.pause()
+        }
+    }
+
+
     var dialog by remember {
         mutableStateOf(false)
     }
@@ -112,6 +153,7 @@ fun GamingScreen(
             score =state.levels.getScore(state.answerSheet),
             maxScore = state.levels.geMaxScore()
         ) {
+
             dialog= !dialog
             val gameSubmission = GameSubmission(
                 id = generateRandomString(),
@@ -177,7 +219,12 @@ fun GamingScreen(
                         modifier = modifier,
                         state = state,
                         level = "Level ${pageState.currentPage + 1} / ${state.levels.size}",
-                        hint = state.levels[pageState.currentPage].hint ?: ""
+                        hint = state.levels[pageState.currentPage].hint ?: "",
+                        isPlaying = isPlaying,
+                        onChangeMusicStatus = { status ->
+                            isPlaying = status
+
+                        }
                     )
                     HorizontalPager(
                         modifier = modifier
@@ -196,7 +243,6 @@ fun GamingScreen(
                                 events(GamingEvents.OnAddAnser(
                                     ans
                                 ))
-
                                 scope.launch {
                                     if (i < state.levels.size - 1) {
                                         events(GamingEvents.OnReset)

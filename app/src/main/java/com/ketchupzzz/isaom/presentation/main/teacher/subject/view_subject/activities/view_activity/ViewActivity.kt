@@ -35,12 +35,14 @@ import androidx.compose.material3.LargeTopAppBar
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedCard
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.ScrollableTabRow
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Tab
 import androidx.compose.material3.TabRow
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
+import androidx.compose.material3.contentColorFor
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.remember
@@ -59,6 +61,7 @@ import com.ketchupzzz.isaom.models.subject.activities.Question
 import com.ketchupzzz.isaom.presentation.main.teacher.subject.view_subject.activities.create_question.CreateQuestion
 import com.ketchupzzz.isaom.presentation.main.teacher.subject.view_subject.activities.edit_question.EditQuestionScreen
 import com.ketchupzzz.isaom.presentation.main.teacher.subject.view_subject.activities.view_activity.components.ReportsTab
+import com.ketchupzzz.isaom.ui.theme.errorLightMediumContrast
 import com.ketchupzzz.isaom.utils.AvatarPhoto
 import com.ketchupzzz.isaom.utils.UnknownError
 import kotlinx.coroutines.launch
@@ -80,6 +83,7 @@ fun ViewActivityScreen(
     }
     val snackbarHostState = remember { SnackbarHostState() }
     val coroutineScope = rememberCoroutineScope()
+
 
     LaunchedEffect(state) {
         state.errors?.let {
@@ -116,7 +120,7 @@ fun ViewActivityScreen(
                 Column(
                     modifier = modifier.fillMaxSize()
                 ) {
-                    TabRow(selectedTabIndex = pageState.currentPage) {
+                    ScrollableTabRow(selectedTabIndex = pageState.currentPage) {
                         Tab(
                             selected = pageState.currentPage == 0,
                             text = { Text(text = "Questions") },
@@ -154,7 +158,8 @@ fun ViewActivityScreen(
                                 questions = state.questions,
                                 submissions = state.submissionWithStudent
                             )
-                            2 -> SubmissionsTab(activityID = activityID, state = state, events = events) // Placeholder for SubmissionsTab
+
+                            2 -> SubmissionsTab(activityID = activityID, state = state, events = events)
                         }
                     }
                 }
@@ -285,12 +290,12 @@ fun QuestionCard(
                 horizontalArrangement = Arrangement.spacedBy(8.dp)
             ) {
                 Button(
-
+                    shape = MaterialTheme.shapes.small,
                     modifier = modifier.weight(1f),
                     onClick = onDelete,
                     colors = ButtonDefaults.buttonColors(
-                        containerColor = MaterialTheme.colorScheme.errorContainer,
-                        contentColor = MaterialTheme.colorScheme.onErrorContainer
+                        containerColor = errorLightMediumContrast,
+                        contentColor = Color.White
                     )
                 ) {
                     Text(text = "Delete", modifier = modifier)
@@ -315,31 +320,24 @@ fun CustomListBox(
             .padding(2.dp)
     ) {
         Text(text = title, style = MaterialTheme.typography.titleSmall, fontWeight = FontWeight.Bold)
-        FlowRow(
-            modifier = Modifier
-                .wrapContentHeight()
-                .padding(8.dp),
-            verticalArrangement = Arrangement.spacedBy(4.dp),
-            horizontalArrangement = Arrangement.spacedBy(4.dp)
-        ) {
-            actions.forEach {
-                val isAnswer = it == answer
-                Card(
-                    colors = CardDefaults.cardColors(
-                        containerColor = if (isAnswer) Color.Green else MaterialTheme.colorScheme.background,
-                        contentColor = if (isAnswer) Color.White else MaterialTheme.colorScheme.onBackground
-                    )
+        actions.forEach {
+            val isAnswer = it == answer
+            Card(
+                modifier = modifier.fillMaxWidth().padding(8.dp),
+                colors = CardDefaults.cardColors(
+                    containerColor = if (isAnswer) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.background,
+                    contentColor = if (isAnswer) Color.White else MaterialTheme.colorScheme.onBackground
+                )
+            ) {
+                Box(
+                    modifier = modifier.fillMaxWidth().padding(4.dp),
                 ) {
-                    Box(
-                        modifier = modifier.wrapContentWidth(),
-                        contentAlignment = Alignment.Center
-                    ) {
-                        Text(
-                            textAlign = TextAlign.Center,
-                            text = it,
-                            modifier = Modifier.padding(8.dp)
-                        )
-                    }
+                    Text(
+                        textAlign = TextAlign.Center,
+                        text = it,
+                        style = MaterialTheme.typography.labelSmall,
+                        modifier = Modifier.padding(8.dp)
+                    )
                 }
             }
         }

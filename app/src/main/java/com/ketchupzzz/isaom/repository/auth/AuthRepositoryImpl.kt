@@ -5,6 +5,7 @@ import android.util.Log
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
 import com.google.android.gms.tasks.Tasks
+import com.google.firebase.FirebaseException
 import com.google.firebase.auth.EmailAuthProvider
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseAuthInvalidCredentialsException
@@ -17,6 +18,7 @@ import com.ketchupzzz.isaom.models.GenderSelection
 import com.ketchupzzz.isaom.models.MaleSelection
 import com.ketchupzzz.isaom.models.UserType
 import com.ketchupzzz.isaom.models.Users
+import com.ketchupzzz.isaom.utils.generateRandomString
 import kotlinx.coroutines.tasks.await
 
 
@@ -289,6 +291,34 @@ class AuthRepositoryImpl(val auth : FirebaseAuth, private val firestore: Firebas
             }
         } else {
             result.invoke(UiState.Error("No user is currently signed in"))
+        }
+    }
+
+    override suspend fun changeProfile(uid: String, uri: Uri, result: (UiState<String>) -> Unit) {
+        try {
+            result(UiState.Loading)
+
+
+            val storageReference = storage.reference
+            val profilePictureRef = storageReference.child("profile_pictures/${generateRandomString(6)}.jpg")
+
+            val uploadTask = profilePictureRef.putFile(uri).await()
+
+
+            val downloadUrl = profilePictureRef.downloadUrl.await()
+
+            firestore.collection(USERS_COLLECTION)
+                .document(uid)
+                .update("avatar",downloadUrl)
+                .await()
+            result(UiState.Success("Profile picture updated: $downloadUrl"))
+
+        } catch (exception: Exception) {
+            // Handle errors and return error state
+            result(UiState.Error("Error: ${exception.message}"))
+        } catch (e : FirebaseException) {
+            // Handle errors and return error state
+            result(UiState.Error("Error: ${e.message}"))
         }
     }
 }

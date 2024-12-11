@@ -41,10 +41,12 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalLifecycleOwner
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.lifecycle.LifecycleOwner
 import androidx.navigation.NavHostController
+import com.ketchupzzz.isaom.R
 import com.ketchupzzz.isaom.models.Difficulty
 import com.ketchupzzz.isaom.models.SectionedLessons
 import com.ketchupzzz.isaom.models.SignLanguageLesson
@@ -87,7 +89,7 @@ fun LessonScreen(
                 SectionedLessonCard(
                     enabled = true,
                     finished = state.lessonAccount?.lessons ?: emptyList(),
-                    label = "Beginner",
+                    label = stringResource(R.string.beginner),
                     lessons = beginner
                 ) {
                     if (state.lessonAccount?.lessons?.contains(it.id) ==false) {
@@ -100,7 +102,7 @@ fun LessonScreen(
                 val isBeginnerFinished = beginner.map { it.id!! }
                 SectionedLessonCard(
                     enabled = state.lessonAccount?.lessons?.containsAll(isBeginnerFinished) ?: false,
-                    label = "Intermediate",
+                    label = stringResource(R.string.intermediate),
                     finished = state.lessonAccount?.lessons ?: emptyList(),
                     lessons = intermediate
                 ) {
@@ -114,7 +116,7 @@ fun LessonScreen(
                 val inter = intermediate.map { it.id!! }
                 SectionedLessonCard(
                     enabled = state.lessonAccount?.lessons?.containsAll(inter) ?: false,
-                    label = "Advanced",
+                    label = stringResource(R.string.advanced),
                     finished = state.lessonAccount?.lessons ?: emptyList(),
                     lessons = advanced
                 ) {
@@ -145,7 +147,9 @@ fun SectionedLessonCard(
         }
     }
     Card(
-        modifier = modifier.fillMaxWidth().padding(8.dp),
+        modifier = modifier
+            .fillMaxWidth()
+            .padding(8.dp),
     ) {
         Column(
             modifier = modifier.fillMaxWidth()
@@ -164,15 +168,31 @@ fun SectionedLessonCard(
                     } else {
                         val min = progress.size.toFloat()
                         val max = lessons.size.toFloat()
+                        val test = if (max > 0) (min / max) * 100 else 0f
+
                         val progressPercentage = if (max > 0) min / max else 0f
-                        CircularProgressIndicator(
-                            progress = {
-                                progressPercentage
-                            },
-                            modifier = Modifier.size(32.dp),
-                            color = MaterialTheme.colorScheme.primary,
-                            strokeWidth = 4.dp,
-                        )
+
+                            Column(
+                                horizontalAlignment = Alignment.CenterHorizontally
+                            ) {
+                                CircularProgressIndicator(
+                                    progress = {
+                                        progressPercentage
+                                    },
+                                    modifier = Modifier.size(32.dp),
+                                    color = MaterialTheme.colorScheme.primary,
+                                    strokeWidth = 4.dp,
+                                )
+                                Text(
+                                    text = String.format("%.2f%%", test),
+                                    style = MaterialTheme.typography.labelSmall.copy(
+                                        color = MaterialTheme.colorScheme.onSurface
+                                    )
+                                )
+                            }
+
+
+
                     }
                 },
                 modifier = Modifier
@@ -204,7 +224,9 @@ fun SectionedLessonCard(
 @Composable
 fun LessonCard(modifier: Modifier =Modifier,isFinished : Boolean ,lesson: SignLanguageLesson ,onClick : () -> Unit) {
     ListItem(
-        modifier = modifier.fillMaxWidth().clickable { onClick() },
+        modifier = modifier
+            .fillMaxWidth()
+            .clickable { onClick() },
         colors = ListItemDefaults.colors(
             containerColor = Color.Transparent,
         ),

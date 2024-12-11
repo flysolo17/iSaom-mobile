@@ -20,7 +20,10 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.ListItem
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.OutlinedCard
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -32,47 +35,108 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.focusModifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.ketchupzzz.isaom.models.subject.StudentWithSubmissions
 import com.ketchupzzz.isaom.models.subject.activities.Question
 import com.ketchupzzz.isaom.models.submissions.SubmissionWithStudent
 import com.ketchupzzz.isaom.models.submissions.Submissions
 import com.ketchupzzz.isaom.models.submissions.getResponses
+import com.ketchupzzz.isaom.utils.AvatarPhoto
 import ir.ehsannarmani.compose_charts.PieChart
 import ir.ehsannarmani.compose_charts.models.Pie
 import kotlin.math.roundToInt
 
 
+
+@OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterial3Api::class)
 @Composable
 fun ReportsTab(
     modifier: Modifier = Modifier,
-    questions : List<Question>,
-    submissions : List<SubmissionWithStudent>
+    questions: List<Question>,
+    submissions: List<SubmissionWithStudent>
 ) {
+    var isBottomSheetVisible by remember { mutableStateOf(false) }
+    var selectedQuestion by remember { mutableStateOf<Question?>(null) }
+
+    fun showBottomSheet(question: Question) {
+        selectedQuestion = question
+        isBottomSheetVisible = true
+    }
+
+    if (isBottomSheetVisible) {
+        ModalBottomSheet(
+            onDismissRequest = { isBottomSheetVisible = false }
+        ) {
+            LazyColumn(
+                modifier = Modifier.padding(16.dp),
+                verticalArrangement = Arrangement.spacedBy(8.dp),
+                horizontalAlignment =Alignment.CenterHorizontally
+            ) {
+                item {
+                    Text("${selectedQuestion?.title}", textAlign = TextAlign.Center)
+                }
+                items(submissions) {
+                    ListItem(
+                        headlineContent = {
+                            Text("${it.student?.name}")
+                        },
+
+
+                        supportingContent = {
+                            val answer = it.submissions!!.answerSheet[selectedQuestion?.id] ?: "no answer"
+                            Text(
+                                answer,
+                                style = MaterialTheme.typography.labelSmall.copy(
+                                    color = if (selectedQuestion?.answer == answer) {
+                                        Color(0xFF388E3C)
+                                    } else {
+                                        Color(0xFFD32F2F)
+                                    }
+                                )
+                            )
+                        },
+                        leadingContent = {
+                            AvatarPhoto(
+                                imageUrl = it.student?.avatar ?: ""
+                            )
+                        }
+                    )
+                }
+            }
+        }
+    }
+
     LazyColumn(
         modifier = modifier.fillMaxWidth()
     ) {
-        items(questions) {
+        items(questions) { question ->
             QuestionReportCard(
-                question = it,
-                submissions  = submissions.map { it.submissions!!}
+                question = question,
+                submissions = submissions.map { it.submissions!! },
+                onClick = { showBottomSheet(question) }
             )
         }
     }
 }
+
+
+
+
 
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
 fun QuestionReportCard(
     modifier: Modifier = Modifier,
     question: Question,
-    submissions: List<Submissions>
+    submissions: List<Submissions>,
+    onClick : (Question) -> Unit,
 ) {
     val data = question.getResponses(submissions)
     val totalResponses = data.sumOf { it.totalCount }
-
     val colors = generateColors(data.size)
     val selectedColors = generateColors(data.size).map { it.copy(alpha = 0.8f) }
+
 
     var pie by remember {
         mutableStateOf(
@@ -86,7 +150,12 @@ fun QuestionReportCard(
             }
         )
     }
+
+
     OutlinedCard(
+        onClick = {
+            onClick(question)
+        },
         modifier = modifier.fillMaxSize().padding(8.dp)
     ) {
         Column(
@@ -101,11 +170,6 @@ fun QuestionReportCard(
                 PieChart(
                     modifier = Modifier.size(200.dp).align(Alignment.CenterHorizontally),
                     data = pie,
-                    onPieClick = {
-                        println("${it.label} Clicked")
-                        val pieIndex = pie.indexOf(it)
-                        pie = pie.mapIndexed { mapIndex, pie -> pie.copy(selected = pieIndex == mapIndex) }
-                    },
                     selectedScale = 1.2f,
                     scaleAnimEnterSpec = spring<Float>(
                         dampingRatio = Spring.DampingRatioMediumBouncy,

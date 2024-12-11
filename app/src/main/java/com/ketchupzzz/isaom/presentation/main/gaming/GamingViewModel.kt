@@ -13,6 +13,7 @@ import com.ketchupzzz.isaom.models.games.Games
 import com.ketchupzzz.isaom.repository.auth.AuthRepository
 import com.ketchupzzz.isaom.repository.game.GameRepository
 import com.ketchupzzz.isaom.utils.UiState
+import com.ketchupzzz.isaom.utils.randomize
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
@@ -42,6 +43,8 @@ class GamingViewModel @Inject constructor(
                 val currentScore = state.score + e.points
                 state = state.copy(score = currentScore)
             }
+
+
         }
     }
 
@@ -116,8 +119,7 @@ class GamingViewModel @Inject constructor(
 
     private fun getLevels(games: Games) {
         viewModelScope.launch {
-
-            gameRepository.getAllLevels(games.id!!) {
+            gameRepository.getAllLevels(games.id!!,games.questions.randomize()) {
                 state = when(it) {
                     is UiState.Error -> state.copy(
                         isLoading = false,
@@ -133,10 +135,11 @@ class GamingViewModel @Inject constructor(
                             isLoading = false,
                             errors = null,
                             levels = it.data,
-                            timer = 0
+                            timer = 0,
                         )
                     }
                 }
+
                 events(GamingEvents.OnStartTimer(games.timer))
             }
         }

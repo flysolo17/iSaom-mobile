@@ -52,6 +52,12 @@ android {
             excludes += "/META-INF/{AL2.0,LGPL2.1}"
         }
     }
+    androidResources {
+        noCompress("tflite")
+    }
+    aaptOptions {
+        noCompress("tflite")
+    }
 }
 
 dependencies {
@@ -137,10 +143,26 @@ dependencies {
 //    implementation ("androidx.room:room-ktx:2.5.1")
 //    kapt ("androidx.room:room-compiler:2.5.1")
 //    implementation ("androidx.room:room-paging:2.5.1")
+
+
     implementation("io.github.grizzi91:bouquet:1.1.2")
+
+
+
+    implementation ("org.tensorflow:tensorflow-lite:2.10.0")
+    implementation( "org.tensorflow:tensorflow-lite-support:0.4.3")
+
+    implementation ("org.tensorflow:tensorflow-lite-task-audio:0.4.4")
+    // Import the GPU delegate plugin Library for GPU inference
+    implementation ("org.tensorflow:tensorflow-lite-gpu-delegate-plugin:0.4.4")
+
+
+
+
 }
 
 
 kapt {
     correctErrorTypes = true
 }
+

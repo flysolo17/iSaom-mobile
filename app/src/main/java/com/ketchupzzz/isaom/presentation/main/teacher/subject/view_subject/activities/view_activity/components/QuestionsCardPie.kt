@@ -44,6 +44,7 @@ fun QuestionsCardPie(
             .fillMaxWidth()
             .padding(8.dp)
     ) {
+
         val data = it.toPieChartData()
         Column(
             modifier = modifier.padding(8.dp),
@@ -153,7 +154,6 @@ fun QuestionsCardPie(
 
                 }
             }
-
         }
     }
 }

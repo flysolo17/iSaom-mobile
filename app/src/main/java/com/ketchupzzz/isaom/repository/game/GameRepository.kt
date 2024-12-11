@@ -10,7 +10,11 @@ import com.ketchupzzz.isaom.utils.UiState
 interface GameRepository {
     suspend fun getAllGames(result : (UiState<List<Games>>) -> Unit)
 
-    suspend fun getAllLevels(gameID : String,result: (UiState<List<Levels>>) -> Unit)
+    suspend fun getAllLevels(
+        gameID : String,
+        levelIds : List<String>,
+        result: (UiState<List<Levels>>) -> Unit
+    )
 
     suspend fun submitScore(
         gameSubmission: GameSubmission,

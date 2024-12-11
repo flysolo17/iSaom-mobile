@@ -82,3 +82,7 @@ fun String.getSpacesInString(): List<Int> {
         if (char == ' ') index else null
     }
 }
+
+fun List<String>.randomize(): List<String> {
+    return this.shuffled()
+}

@@ -163,9 +163,8 @@ fun CreateQuestion(
                         state = state.copy(uri = it)
                     }
 
-                    //make the answer dropdown
-                    //the list is choices
-                    val choices = state.choices
+
+                    val choices = state.choices.ifEmpty { state.labels }
 
 
                     ExposedDropdownMenuBox(

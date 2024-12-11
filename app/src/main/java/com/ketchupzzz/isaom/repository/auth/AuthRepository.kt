@@ -55,4 +55,10 @@ interface AuthRepository {
 
     suspend fun listenToUserEmailVerification(result: (UiState<Boolean>) -> Unit)
 
+
+    suspend fun changeProfile(
+        uid : String,
+        uri: Uri,
+        result: (UiState<String>) -> Unit
+    )
 }

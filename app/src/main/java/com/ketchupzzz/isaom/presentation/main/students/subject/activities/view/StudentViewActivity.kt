@@ -1,5 +1,14 @@
 package com.ketchupzzz.isaom.presentation.main.students.subject.activities.view
 
+import android.Manifest
+import android.content.pm.PackageManager
+import android.media.AudioRecord
+import android.media.MediaRecorder
+import android.widget.Space
+import androidx.activity.compose.LocalActivityResultRegistryOwner
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.compose.setContent
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -15,16 +24,22 @@ import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material.icons.filled.Mic
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.FilledIconButton
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.IconButtonDefaults
 import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
+import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -34,22 +49,30 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import androidx.core.content.ContextCompat
 import androidx.navigation.NavHostController
 import coil.compose.AsyncImage
 import com.ketchupzzz.isaom.models.subject.activities.Activity
 import com.ketchupzzz.isaom.models.subject.activities.Question
+import com.ketchupzzz.isaom.presentation.main.teacher.subject.view_subject.activities.view_activity.QuestionCard
 import com.ketchupzzz.isaom.utils.ProgressBar
 import com.ketchupzzz.isaom.utils.UnknownError
 import com.ketchupzzz.isaom.utils.toast
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import org.tensorflow.lite.support.label.Category
 
 
 @OptIn(ExperimentalMaterial3Api::class)
+
 @Composable
 fun StudentViewActivity(
     modifier: Modifier = Modifier,
@@ -59,6 +82,8 @@ fun StudentViewActivity(
     navHostController: NavHostController
 ) {
     val context = LocalContext.current
+
+
     LaunchedEffect(
         activity
     ) {
@@ -125,16 +150,65 @@ fun TakeActivityScreen(
     events: (StudentViewActivityEvents) -> Unit,
     activity: Activity
 ) {
+
     val scope = rememberCoroutineScope()
     val pagerState = rememberPagerState(
         initialPage = 0
     ) { state.questions.size }
+
+
+    val currentQuestion = state.questions[pagerState.currentPage]
+    val context  = LocalContext.current
+    var classificationResult by remember { mutableStateOf(
+        state.answers[currentQuestion.id] ?: "Press 'Classify Audio' to start"
+    ) }
+
+    LaunchedEffect(pagerState.currentPage) {
+        classificationResult  = state.answers[currentQuestion.id] ?: "Press 'Classify Audio' to start"
+    }
+    var isProcessing by remember { mutableStateOf(false) }
+
+    val audioClassifierHelper = remember {
+        AudioClassifierHelper(
+            context = context,
+            listener = object : AudioClassificationListener {
+                override fun onError(error: String) {
+                    classificationResult = "Error: $error"
+                    isProcessing = false
+                }
+                override fun onResult(results: List<Category>, inferenceTime: Long) {
+                    val detectedLabels = results.joinToString(", ") { it.label.replace(Regex("\\d+"), "").trim() }
+                    classificationResult = detectedLabels
+                    isProcessing = false
+                }
+            }
+        )
+    }
+
+    DisposableEffect(Unit) {
+        onDispose {
+            audioClassifierHelper.stopAudioClassification()
+        }
+    }
+    LaunchedEffect(classificationResult) {
+        if (classificationResult != "Background Noise") {
+            if (classificationResult.contains(currentQuestion.answer!!)) {
+                classificationResult = currentQuestion.answer!!
+                events(StudentViewActivityEvents.OnUpdateAnswers(currentQuestion.id ?: "", currentQuestion.answer))
+                audioClassifierHelper.stopAudioClassification()
+            }
+        }
+    }
+
+
     Column(
         modifier = modifier,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Box(
-            modifier = modifier.fillMaxWidth().padding(8.dp),
+            modifier = modifier
+                .fillMaxWidth()
+                .padding(8.dp),
             contentAlignment = Alignment.Center
         ) {
             Text(
@@ -143,7 +217,6 @@ fun TakeActivityScreen(
                 maxLines = 1,
                 overflow = TextOverflow.Ellipsis
             )
-
         }
 
         val current = state.answers.size
@@ -173,11 +246,21 @@ fun TakeActivityScreen(
                     events(
                         StudentViewActivityEvents.OnUpdateAnswers(question.id ?: "", it)
                     )
-                }
+                },
+                onStartClassification = {
+                    audioClassifierHelper.startAudioClassification()
+                },
+                onStopClassification = {
+                    audioClassifierHelper.stopAudioClassification()
+                },
+                isProcessing = isProcessing,
+                classificationResult = classificationResult
             )
         }
         Row(
-            modifier = modifier.fillMaxWidth().padding(16.dp),
+            modifier = modifier
+                .fillMaxWidth()
+                .padding(16.dp),
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.SpaceBetween
         ) {
@@ -216,6 +299,7 @@ fun TakeActivityScreen(
                         events.invoke(StudentViewActivityEvents.OnSubmitAnswer(activity = activity))
                     } else {
                         scope.launch {
+
                             pagerState.animateScrollToPage(pagerState.currentPage + 1)
                         }
                     }
@@ -234,16 +318,26 @@ fun QuestionDisplay(
     question: Question,
     currentAnswer : String ?,
     onSelectAnswer : (String) -> Unit,
+    isProcessing: Boolean,
+    classificationResult: String,
+    onStartClassification: () -> Unit,
+    onStopClassification : () -> Unit
 ) {
     Column(
-        modifier = modifier.fillMaxSize().padding(16.dp),
+        modifier = modifier
+            .fillMaxSize()
+            .padding(16.dp),
         verticalArrangement = Arrangement.spacedBy(8.dp)
     ) {
         Card(
-            modifier = modifier.fillMaxWidth().padding(8.dp)
+            modifier = modifier
+                .fillMaxWidth()
+                .padding(8.dp)
         ) {
             Column(
-                modifier = modifier.fillMaxWidth().padding(16.dp),
+                modifier = modifier
+                    .fillMaxWidth()
+                    .padding(16.dp),
                 horizontalAlignment = Alignment.CenterHorizontally,
                 verticalArrangement = Arrangement.spacedBy(12.dp)
             ) {
@@ -268,55 +362,120 @@ fun QuestionDisplay(
         Spacer(
             modifier = modifier.weight(1f)
         )
-        Column(
-            modifier = modifier.fillMaxWidth(),
-            verticalArrangement = Arrangement.spacedBy(8.dp),
-        ) {
-            question.choices.forEach { choice ->
-                val isSelect = currentAnswer == choice
-                if (isSelect) {
-                    Button(
-                        modifier = modifier.fillMaxWidth(),
-                        onClick = {
-                            onSelectAnswer(choice)
-                        },
-                        shape = MaterialTheme.shapes.small
-                    ) {
-                        Box(
+        if (question.choices.isNotEmpty()) {
+            Column(
+                modifier = modifier.fillMaxWidth(),
+                verticalArrangement = Arrangement.spacedBy(8.dp),
+            ) {
+                question.choices.forEach { choice ->
+                    val isSelect = currentAnswer == choice
+                    if (isSelect) {
+                        Button(
                             modifier = modifier.fillMaxWidth(),
-                            contentAlignment = Alignment.CenterStart
+                            onClick = {
+                                onSelectAnswer(choice)
+                            },
+                            shape = MaterialTheme.shapes.small
                         ) {
-                            Text(
-                                text = choice,
-                                modifier = modifier.padding(8.dp)
-                            )
-                        }
+                            Box(
+                                modifier = modifier.fillMaxWidth(),
+                                contentAlignment = Alignment.CenterStart
+                            ) {
+                                Text(
+                                    text = choice,
+                                    modifier = modifier.padding(8.dp)
+                                )
+                            }
 
-                    }
-                } else {
-                    OutlinedButton(
-                        modifier = modifier.fillMaxWidth(),
-                        onClick = {
-                            onSelectAnswer(choice)
-                        },
-                        shape = MaterialTheme.shapes.small
-                    ) {
-                        Box(
-                           modifier = modifier.fillMaxWidth(),
-                            contentAlignment = Alignment.CenterStart
+                        }
+                    } else {
+                        OutlinedButton(
+                            modifier = modifier.fillMaxWidth(),
+                            onClick = {
+                                onSelectAnswer(choice)
+                            },
+                            shape = MaterialTheme.shapes.small
                         ) {
-                            Text(
-
-                                text = choice,
-                                modifier = modifier.padding(8.dp)
-                            )
+                            Box(
+                                modifier = modifier.fillMaxWidth(),
+                                contentAlignment = Alignment.CenterStart
+                            ) {
+                                Text(
+                                    text = choice,
+                                    modifier = modifier.padding(8.dp)
+                                )
+                            }
                         }
-
                     }
                 }
             }
+        } else {
+
+            AudioInput(
+                isProcessing = isProcessing,
+                classificationResult = classificationResult,
+                onStartClassification = {
+                    onStartClassification()
+                },
+                onStopClassification = {
+                    onStopClassification()
+                },
+                isCorrect = classificationResult.contains(question.answer!!)
+            )
         }
+
     }
 }
 
 
+
+
+@Composable
+fun AudioInput(
+    modifier: Modifier = Modifier,
+    isProcessing: Boolean,
+    classificationResult: String,
+    onStartClassification: () -> Unit,
+    onStopClassification: () -> Unit,
+    isCorrect : Boolean
+) {
+    Column(
+        modifier = modifier
+            .fillMaxWidth()
+            .padding(16.dp),
+        verticalArrangement = Arrangement.Center,
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+        FilledIconButton(
+            colors = IconButtonDefaults.iconButtonColors(
+                containerColor = if (isProcessing) Color.White else MaterialTheme.colorScheme.primary,
+                contentColor = if (isProcessing) Color.Black else MaterialTheme.colorScheme.onPrimary
+            ),
+            onClick = {
+                if (isProcessing) {
+                    onStopClassification()
+                } else {
+                    onStartClassification()
+                }
+            }
+        ) {
+            Icon(
+                imageVector =  Icons.Default.Mic,
+                contentDescription = if (isProcessing) "Stop" else "Start"
+            )
+        }
+        Spacer(modifier = Modifier.height(16.dp))
+        Text(
+            text = classificationResult.uppercase(),
+            style = MaterialTheme.typography.bodyLarge.copy(
+                color = if (isCorrect) {
+                    Color(0xFF388E3C)
+                } else {
+                    Color(0xFFD32F2F)
+                }
+            ),
+            modifier = Modifier.fillMaxWidth(),
+            textAlign = TextAlign.Center
+        )
+    }
+}

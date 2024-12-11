@@ -36,4 +36,11 @@
     <string name="confirm_password">Kumpirmaem ti Password</string>
 
 
+
+    <string name="beginner">Ubbing</string>
+    <string name="intermediate">Tungtungtong</string>
+    <string name="advanced">Napateg</string>
+    <string name="confirm">Kumpirmahen</string>
+    <string name="are_you_sure_you_want_to_change_the_language">Sigurado ka kadi a kayat mo nga ibaliw ti lenguahe?</string>
+
 </resources>

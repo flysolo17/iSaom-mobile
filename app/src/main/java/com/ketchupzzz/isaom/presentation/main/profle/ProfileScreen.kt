@@ -1,6 +1,9 @@
 package com.ketchupzzz.isaom.presentation.main.profle
 
+import android.net.Uri
 import android.widget.Toast
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -16,9 +19,11 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
+import com.ketchupzzz.isaom.presentation.main.teacher.subject.add_subject.AddSubjectEvents
 import com.ketchupzzz.isaom.presentation.routes.AppRouter
 import com.ketchupzzz.isaom.ui.custom.PrimaryButton
 import com.ketchupzzz.isaom.utils.ProfileImage
+import com.ketchupzzz.isaom.utils.toast
 
 @Composable
 fun ProfileScreen(
@@ -34,7 +39,19 @@ fun ProfileScreen(
             mainNav.navigate(AppRouter.AuthRoutes.route)
         }
     }
+    val imagePickerLauncher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.GetContent()
+    ) { uri: Uri? ->
+        uri?.let {
+            events(ProfileEvents.SelectProfile(it))
+        }
+    }
 
+    LaunchedEffect(state.messages) {
+        if (state.messages!= null) {
+            context.toast(state.messages)
+        }
+    }
     Column(
         modifier = modifier
             .fillMaxSize()
@@ -42,8 +59,12 @@ fun ProfileScreen(
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.spacedBy(8.dp)
     ) {
-        ProfileLayout(state = state)
+        ProfileLayout(state = state, onProfileSelected = {
+            imagePickerLauncher.launch("image/*")
+        })
+
         Spacer(modifier = modifier.weight(1f))
+
         PrimaryButton(onClick = { navHostController.navigate(AppRouter.EditProfileRoute.navigate(state.users!!)) }) {
             Text(text = "Edit Profile")
         }
@@ -60,6 +81,7 @@ fun ProfileScreen(
 fun ProfileLayout(
     modifier: Modifier = Modifier,
     state: ProfileState,
+    onProfileSelected : () -> Unit
 ) {
     val users = state.users
     Column(
@@ -70,7 +92,7 @@ fun ProfileLayout(
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         ProfileImage(imageURL = users?.avatar ?: "", size = 80.dp) {
-            
+            onProfileSelected()
         }
         Text(text = "${users?.name}", style =MaterialTheme.typography.titleLarge)
         Text(text = "${users?.type?.name}", style =MaterialTheme.typography.labelSmall)

@@ -8,6 +8,8 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.LightbulbCircle
+import androidx.compose.material.icons.filled.VolumeMute
+import androidx.compose.material.icons.filled.VolumeUp
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -23,7 +25,8 @@ fun GamingHeader(
     state: GamingState,
     level : String,
     hint : String,
-
+    isPlaying : Boolean,
+    onChangeMusicStatus : (Boolean) -> Unit
 ) {
     val minutes = state.timer / 60
     val seconds = state.timer % 60
@@ -45,8 +48,22 @@ fun GamingHeader(
                 color = MaterialTheme.colorScheme.primary
             )
         )
+        Row(
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.spacedBy(8.dp)
+        ){
+            ShowHint(hint = hint)
 
-        ShowHint(hint = hint)
+            IconButton(onClick = {
+                onChangeMusicStatus(!isPlaying)
+            }) {
+               Icon(
+                    imageVector = if (isPlaying)  Icons.Filled.VolumeUp else Icons.Filled.VolumeMute,
+                    "Audio"
+                )
+            }
+        }
+
 
 
     }
